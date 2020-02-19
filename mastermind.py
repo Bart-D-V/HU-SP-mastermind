@@ -1,3 +1,7 @@
+'''''
+play = 1 en play = 2 zijn algoritmen uit het artikel van de universiteit Groningen
+'''''
+
 import random
 from itertools import compress, product
 pinnetjes = [1 , 2 , 3 , 4 , 5 , 6]
@@ -44,7 +48,7 @@ def algoritmen1(fb):
         codes.remove(i)
 play = int(input('kies 0 voor zelf spelen.\nkies 1 voor ai-1. \nkies 2 voor ai-2. '))
 # algoritmen2
-def bestchoice(x):
+def algoritmen2(x):
     if x == 1:
         return codeinput('1123')
     else:
@@ -62,11 +66,18 @@ def bestchoice(x):
             if score[1] < bestcode[1]:
                 bestcode = score
     return bestcode[0]
+# algoritmen3
+def algoritmen3(fb):
+    lst = []
+    for i in codes:
+        if feedback(feedbackcode, i) == fb:
+            lst.append(i)
+    return lst
 # zelfspelen
 if play == 0:
     secret = pickcode()
     while pogingen > 0:
-        print('nog ' + str(11 - pogingen) + ' pogingen')
+        print('nog ' + str(pogingen) + ' pogingen')
         poging = (feedback(secret, codeinput(input('geef code: '))))
         if poging == [4, 0]:
             print('je hebt gewonnen!')
@@ -80,7 +91,7 @@ if play == 0:
 elif play == 1:
     secret = codeinput(input('geef secret: '))
     while pogingen > 0:
-        print('nog ' + str(11 - pogingen) + ' pogingen')
+        print('nog ' + str(pogingen) + ' pogingen')
         feedbackcode = pickcode()
         print(feedbackcode)
         if feedback(secret, feedbackcode) == [4, 0]:
@@ -95,14 +106,39 @@ elif play == 1:
 elif play == 2:
     secret = codeinput(input('geef secret: '))
     while pogingen > 0:
-        print('nog ' + str(11 - pogingen) + ' pogingen')
-        feedbackcode = bestchoice(pogingen)
+        print('nog ' + str(pogingen) + ' pogingen')
+        feedbackcode = algoritmen2(pogingen)
         print(feedbackcode)
         if feedback(secret, feedbackcode) == [4, 0]:
             print('je hebt gewonnen!')
             break
         else:
             algoritmen1(codeinput(input('geef feeback: ')))
+        pogingen -= 1
+    if pogingen == 0:
+        print('je hebt verloren')
+# AI-3
+else:
+    secret = pickcode()
+    lst = []
+    while pogingen > 0:
+        print('nog ' + str(pogingen) + ' pogingen')
+        if pogingen == 1:
+            print(max(set(lst), key=lst.count))
+            if feedback(secret, (max(set(lst), key=lst.count))) == [4, 0]:
+                print('je hebt gewonnen!')
+                break
+            else:
+                pogingen = 0
+                break
+        feedbackcode = pickcode()
+        print(feedbackcode)
+        print(feedback(secret, feedbackcode))
+        if feedback(secret, feedbackcode) == [4, 0]:
+            print('je hebt gewonnen!')
+            break
+        else:
+            lst += algoritmen3(feedback(secret, feedbackcode))
         pogingen -= 1
     if pogingen == 0:
         print('je hebt verloren')
