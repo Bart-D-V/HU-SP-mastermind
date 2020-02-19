@@ -1,5 +1,9 @@
 '''''
-play = 1 en play = 2 zijn algoritmen uit het artikel van de universiteit Groningen
+play = 0 is het spel mastermind.
+play = 1 en play = 2 zijn algoritmen uit het artikel van de universiteit Groningen.
+play = 3 is een zelfbedachte algoritmen die een random code uitprobeert en vervolgens die code + feedabck vergelijkt met alle mogelijke codes.
+elke keer als de feedback hetzelfde is word deze code in een lijst gegooid. dit doet het algoritmen 7 keer.
+bij de 8ste poging kijkt het algoritmen welke code het meest voorkomt in de lijst en kiest die code als laaste poging. 
 '''''
 
 import random
@@ -44,6 +48,7 @@ def algoritmen1(fb):
     for i in codes:
         if feedback(feedbackcode, i) != fb:
             trash.append(i)
+    trash.append(feedbackcode)
     for i in trash:
         codes.remove(i)
 play = int(input('kies 0 voor zelf spelen.\nkies 1 voor ai-1. \nkies 2 voor ai-2. '))
@@ -73,6 +78,17 @@ def algoritmen3(fb):
         if feedback(feedbackcode, i) == fb:
             lst.append(i)
     return lst
+
+#count list
+def count(lst):
+    aantal = 0
+    for i in lst:
+        if lst.count(i) > aantal:
+            aantal = lst.count(i)
+            code = i
+    return code
+
+
 # zelfspelen
 if play == 0:
     secret = pickcode()
@@ -124,8 +140,8 @@ else:
     while pogingen > 0:
         print('nog ' + str(pogingen) + ' pogingen')
         if pogingen == 1:
-            print(max(set(lst), key=lst.count))
-            if feedback(secret, (max(set(lst), key=lst.count))) == [4, 0]:
+            print(count(lst))
+            if feedback(secret, count(lst)) == [4, 0]:
                 print('je hebt gewonnen!')
                 break
             else:
