@@ -2,10 +2,9 @@ import random
 from itertools import compress, product
 pinnetjes = [1 , 2 , 3 , 4 , 5 , 6]
 codes = []
-pogingen = 1
+pogingen = 8
 for i in product(*[pinnetjes]*4):
     codes.append(list(i))
-
 
 # random code picker
 def pickcode():
@@ -28,7 +27,6 @@ def feedback(code1, code2):
                     break
                 x += 1
         y += 1
-    print(lst)
     return fb
 # input code
 def codeinput(precode):
@@ -36,26 +34,75 @@ def codeinput(precode):
     for i in precode:
         code.append(int(i))
     return code
-
-play = 0 #int(input('kies 0 voor zelf spelen.\nkies 1 voor pc. \n'))
+# algoritmen1
+def algoritmen1(fb):
+    trash = []
+    for i in codes:
+        if feedback(feedbackcode, i) != fb:
+            trash.append(i)
+    for i in trash:
+        codes.remove(i)
+play = int(input('kies 0 voor zelf spelen.\nkies 1 voor ai-1. \nkies 2 voor ai-2. '))
+# algoritmen2
+def bestchoice(x):
+    if x == 1:
+        return codeinput('1123')
+    else:
+        bestcode = [[], 99999999]
+        for i in codes:
+            score = [i, 0]
+            dict = {
+                '00': 0, '10': 0, '20': 0, '30': 0, '40': 0, '01': 0, '02': 0, '03': 0, '04': 0, '11': 0, '12': 0, '13': 0, '21': 0, '22': 0, '31': 0
+            }
+            for j in codes:
+                dict[''.join(map(str, feedback(i, j)))] += 1
+            for q in dict:
+                score[1] += dict[q]**2
+            score[1] = score[1] / len(codes)
+            if score[1] < bestcode[1]:
+                bestcode = score
+    return bestcode[0]
+# zelfspelen
 if play == 0:
     secret = pickcode()
-    while pogingen <= 10:
-        print(secret)
-        print('je ' + str(pogingen) + ' poging')
+    while pogingen > 0:
+        print('nog ' + str(11 - pogingen) + ' pogingen')
         poging = (feedback(secret, codeinput(input('geef code: '))))
         if poging == [4, 0]:
             print('je hebt gewonnen!')
             break
         else:
             print('feedback' + str(poging))
-        pogingen += 1
-    if pogingen == 10:
+        pogingen -= 1
+    if pogingen == 0:
         print('je hebt verloren')
-
-else:
+# AI-1
+elif play == 1:
     secret = codeinput(input('geef secret: '))
-    while pogingen <= 10:
-        print('je ' + str(pogingen) + ' poging')
-
-        pogingen += 1
+    while pogingen > 0:
+        print('nog ' + str(11 - pogingen) + ' pogingen')
+        feedbackcode = pickcode()
+        print(feedbackcode)
+        if feedback(secret, feedbackcode) == [4, 0]:
+            print('je hebt gewonnen!')
+            break
+        else:
+            algoritmen1(codeinput(input('geef feeback: ')))
+        pogingen -= 1
+    if pogingen == 0:
+        print('je hebt verloren')
+# AI-2
+elif play == 2:
+    secret = codeinput(input('geef secret: '))
+    while pogingen > 0:
+        print('nog ' + str(11 - pogingen) + ' pogingen')
+        feedbackcode = bestchoice(pogingen)
+        print(feedbackcode)
+        if feedback(secret, feedbackcode) == [4, 0]:
+            print('je hebt gewonnen!')
+            break
+        else:
+            algoritmen1(codeinput(input('geef feeback: ')))
+        pogingen -= 1
+    if pogingen == 0:
+        print('je hebt verloren')
